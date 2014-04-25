@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AccountID, ImageID, FlavorID are required
+# AccountID is required
 
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
