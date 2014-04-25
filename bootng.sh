@@ -9,4 +9,4 @@ BYPASS=$5
 SSHKEY=~/.ssh/id_rsa.pub
 
 supernova $ACCOUNT $BYPASS boot --disk-config MANUAL --image $IMAGE --flavor $FLAVOR \
---file /root/.ssh/authorized_keys=$SSHKEY $NAME  | grep id | head -n 1 | awk '{print $4}'
+--file ${HOME}/.ssh/authorized_keys=$SSHKEY $NAME  | grep id | head -n 1 | awk '{print $4}'
