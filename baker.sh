@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AccountID is required
+# AccountID is required and should be match a supernova environment
 
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
