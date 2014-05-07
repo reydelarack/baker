@@ -7,6 +7,7 @@ Dependencies
 ============
 
 supernova. pip install it. rackspace-novaclient or python-novaclient also recommended.
+nc (netcat)
 
 Gotchas
 =======
