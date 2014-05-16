@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ACCOUNT=$1
+ACCOUNT=${1:-default}
 IMAGE=${2:-e5d7ca78-a487-4d7e-9dd1-73165df3f9fd}
 FLAVOR=${3:-performance1-1}
 NAME=${4:-"baker-`date +%s`"}

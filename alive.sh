@@ -1,6 +1,7 @@
 #!/bin/bash
 
 IP=$1
+SSHARGS='-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes'
 
 [ -z "$IP" ] && exit 1
 
@@ -9,5 +10,11 @@ IP=$1
 done
 
 while ! nc -z "$IP" 22; do
+	sleep 1
         continue
+done
+
+while ! ssh $SSHARGS "root@$IP" true; do
+	sleep 1
+	continue
 done) &> /dev/null
