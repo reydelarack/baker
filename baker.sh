@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AccountID is required and should be match a supernova environment
+# AccountID is required and should match a supernova environment
 
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
@@ -22,10 +22,13 @@ IP=`$BAKERDIR/ipng.sh $ACCOUNT $UUID "$BYPASS"`
 $BAKERDIR/alive.sh $IP
 
 if [ -n "$SCRIPT" ]; then
-	scp $SSHARGS $SCRIPT "root@$IP":/root/baker-kick.sh &> /dev/null
-	ssh $SSHARGS "root@$IP" 'chmod 755 /root/baker-kick.sh; /root/baker-kick.sh'
+	scp $SSHARGS $SCRIPT "root@$IP":/root/.baker-kick.sh &> /dev/null
+	ssh $SSHARGS "root@$IP" 'chmod 755 /root/.baker-kick.sh; /root/.baker-kick.sh'
 else
 	ssh $SSHARGS "root@$IP"
 fi
 
-$BAKERDIR/deleteng.sh $ACCOUNT $UUID "$BYPASS"
+$BAKERDIR/alive.sh $IP
+
+# Nuke unless /root/.baker_preserve exists.
+ssh $SSHARGS "root@$IP" stat /root/.baker_preserve &> /dev/null || $BAKERDIR/deleteng.sh $ACCOUNT $UUID "$BYPASS"
