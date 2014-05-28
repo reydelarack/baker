@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # AccountID is required and should match a supernova environment
+# <Scripts> can be a space separated list of filenames to uploaded. First one
+# in list will be ran after all others have been uploaded. They will be uploaded
+# to /root/.baker/.
 
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
@@ -22,8 +25,21 @@ IP=`$BAKERDIR/ipng.sh $ACCOUNT $UUID "$BYPASS"`
 $BAKERDIR/alive.sh $IP
 
 if [ -n "$SCRIPT" ]; then
-	scp $SSHARGS $SCRIPT "root@$IP":/root/.baker-kick.sh &> /dev/null
+	export first second
+	for include in $SCRIPT; do # Cannot have spaces in filenames.
+		if [ -z "$first" ]; then
+			scp $SSHARGS "$include" "root@$IP":/root/.baker-kick.sh &> /dev/null
+			first=1
+		else
+			if [ -z "$second" ]; then
+				ssh $SSHARGS "root@$IP" 'mkdir -p /root/.baker/'
+				second=1
+			fi
+			scp $SSHARGS "$include" "root@$IP":/root/.baker/ &> /dev/null
+		fi
+	done
 	ssh $SSHARGS "root@$IP" 'chmod 755 /root/.baker-kick.sh; /root/.baker-kick.sh'
+	unset first second
 else
 	ssh $SSHARGS "root@$IP"
 fi
