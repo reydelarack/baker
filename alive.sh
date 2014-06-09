@@ -9,11 +9,6 @@ SSHARGS='-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oId
         continue
 done
 
-while ! nc -z "$IP" 22; do
-	sleep 1
-        continue
-done
-
 while ! ssh $SSHARGS "root@$IP" true; do
 	sleep 1
 	continue
