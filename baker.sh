@@ -8,13 +8,13 @@
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
 SSHARGS='-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no'
-NAME="baker-`date +%s`"
 
 ACCOUNT=$1
 IMAGE=$2
 FLAVOR=$3
 SCRIPT=$4
 BYPASS=$5
+NAME=$6
 
 BAKERDIR="bash `dirname $(readlink -f $0)`"
 
