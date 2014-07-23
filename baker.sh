@@ -18,7 +18,7 @@ NAME=$6
 
 BAKERDIR="bash `dirname $(readlink -f $0)`"
 
-UUID=`$BAKERDIR/bootng.sh "$ACCOUNT" "$IMAGE" "$FLAVOR" "$NAME" "$BYPASS"`
+UUID=`$BAKERDIR/bootng.sh "$ACCOUNT" "$IMAGE" "$FLAVOR" "$NAME" "$BYPASS"` || exit 1
 
 IP=`$BAKERDIR/ipng.sh $ACCOUNT $UUID "$BYPASS"`
 
@@ -43,8 +43,6 @@ if [ -n "$SCRIPT" ]; then
 else
 	ssh $SSHARGS "root@$IP"
 fi
-
-$BAKERDIR/alive.sh $IP
 
 # Nuke unless /root/.baker_preserve exists.
 ssh $SSHARGS "root@$IP" stat /root/.baker_preserve &> /dev/null || $BAKERDIR/deleteng.sh $ACCOUNT $UUID "$BYPASS"
