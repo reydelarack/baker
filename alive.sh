@@ -1,11 +1,14 @@
 #!/bin/bash
 
 IP=$1
-SSHARGS='-q -oConnectTimeout=10 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -o VerifyHostKeyDNS=no'
+SSHARGS=$2
+USER=$3
 
 [ -z "$IP" ] && exit 1
+[ -z "$SSHARGS" ] && exit 1
+[ -z "$USER" ] && exit 1
 
-(while ! ssh $SSHARGS "root@$IP" true; do
+(while ! ssh $SSHARGS "$USER@$IP" true; do
 	sleep 1
 	continue
 done) &> /dev/null

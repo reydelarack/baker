@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-ACCOUNT=${1:-default}
-IMAGE=${2:-f0b8595d-128e-4514-a5cc-847429dcfa6b}
-FLAVOR=${3:-performance1-1}
-NAME=${4:-"baker-`date +%s`"}
+ACCOUNT=$1
+IMAGE=$2
+FLAVOR=$3
+NAME=$4
 BYPASS=$5
 
 SSHKEY=~/.ssh/id_rsa.pub
