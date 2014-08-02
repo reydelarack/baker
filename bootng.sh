@@ -16,10 +16,13 @@ function fail() {
 [ -f "$SSHKEY" ] || fail "$SSHKEY does not exist."
 
 # keypair-add is picky:
-SSHUSER="`ssh-keygen -lf $SSHKEY | awk '{print $3}' | tr -d .`"
 SSHKEYID="`ssh-keygen -lf $SSHKEY | awk '{print $2}'`"
+SSHUSER="`echo $SSHKEYID | tr -d ':'`"
 
-HASKEY=`supernova $ACCOUNT $BYPASS keypair-list 2> /dev/null | grep $SSHKEYID`
+HASKEY="`supernova $ACCOUNT $BYPASS keypair-list 2> /dev/null | grep -F $SSHKEYID`"
+
+[ -n "$HASKEY" ] && SSHUSER="`echo $HASKEY | awk '{print $2}'`"
+
 echo $HASKEY | grep -qF "$SSHKEYID" || supernova $ACCOUNT $BYPASS keypair-add \
 --pub-key $SSHKEY "$SSHUSER" &> /dev/null
 
