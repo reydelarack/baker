@@ -20,6 +20,8 @@ NAME=${6:-"baker-`date +%s`"}
 # This bit is an ugly hack.
 BAKERDIR="bash `dirname $(readlink -f $0)`"
 
+IMAGE=`supernova $ACCOUNT $BPASS image-list | grep -F "$IMAGE" | head -n 1 | awk '{print $2}'`
+
 USER=root
 OTHERUSER=`supernova $ACCOUNT $BYPASS image-show $IMAGE | grep com.rackspace__1__ssh_user | awk '{print $5}'`
 [ -n "$OTHERUSER" ] && USER=$OTHERUSER
