@@ -11,7 +11,7 @@ supernova. pip install it. Also install rackspace-novaclient (metapackage), or p
 Setting up Supernova for Rackspace
 ==================================
 
-~.supernova:
+~/.supernova:
 
 ```
 [account-region]
@@ -30,8 +30,7 @@ You can make multiple of those entries per datacenter if you like. Use lon.ident
 Gotchas
 =======
 
-Needs ~/.ssh/id_rsa.pub. nova keypair should probably be removed in advance
-as bootng.sh expects it to be in a certain format.
+Generate an SSH key if you don't already have it. This will use the "default" key of ~/.ssh/id_rsa{,.pub}.
 
 baker.sh nukes the server after you log out or the script is done. You can
 prevent this by making sure the server is still accessible (at least momentarily)
