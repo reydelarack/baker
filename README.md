@@ -6,7 +6,26 @@ Bash scripts for scripted server deployments on Openstack.
 Dependencies
 ============
 
-supernova. pip install it. rackspace-novaclient or python-novaclient also recommended.
+supernova. pip install it. Also install rackspace-novaclient (metapackage), or python-novaclient if not on Rackspace.
+
+Setting up Supernova for Rackspace
+==================================
+
+~.supernova:
+
+```
+[account-region]
+NOVA_URL=https://identity.api.rackspacecloud.com/v2.0/
+NOVA_RAX_AUTH=1
+NOVA_REGION_NAME=REGION
+NOVA_SERVICE_NAME=cloudServersOpenStack
+NOVA_USERNAME=USERNAME
+OS_PASSWORD=APIKEY
+OS_TENANT_ID=ACCOUNTNUMBER
+OS_AUTH_SYSTEM=rackspace
+```
+
+You can make multiple of those entries per datacenter if you like. Use lon.identity for NOVA_URL on UK accounts.
 
 Gotchas
 =======
