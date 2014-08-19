@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # AccountID is required and should match a supernova environment
 # <Scripts> can be a space separated list of filenames to uploaded. First one
@@ -7,7 +7,7 @@
 
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
 
-# -l $USER doesn't work with scp.
+# -l $USER doesn't work with scp, so not using that here.
 SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
@@ -17,25 +17,45 @@ SCRIPT=$4
 BYPASS=$5
 NAME=${6:-"baker-`date +%s`"}
 
-# This bit is an ugly hack.
-BAKERDIR="bash `dirname $(readlink -f $0)`"
-
-IMAGE=`supernova $ACCOUNT $BPASS image-list | grep -F "$IMAGE" | head -n 1 | awk '{print $2}'`
-
 USER=root
 OTHERUSER=`supernova $ACCOUNT $BYPASS image-show $IMAGE | grep com.rackspace__1__ssh_user | awk '{print $5}'`
 [ -n "$OTHERUSER" ] && USER=$OTHERUSER
 
+SSHKEY=~/.ssh/id_rsa.pub
 
-UUID=`$BAKERDIR/bootng.sh "$ACCOUNT" "$IMAGE" "$FLAVOR" "$NAME" "$BYPASS"` || exit 1
+##### Boot the server
+[ -f "$SSHKEY" ] || fail "$SSHKEY does not exist."
+# keypair-add is picky:
+SSHKEYID="`ssh-keygen -lf $SSHKEY | awk '{print $2}'`"
+SSHUSER="`echo $SSHKEYID | tr -d ':'`"
 
-IP=`$BAKERDIR/ipng.sh $ACCOUNT $UUID "$BYPASS"`
+HASKEY="`supernova $ACCOUNT $BYPASS keypair-list 2> /dev/null | grep -F $SSHKEYID`"
+[ -n "$HASKEY" ] && SSHUSER="`echo $HASKEY | awk '{print $2}'`"
 
-$BAKERDIR/alive.sh $IP "$SSHARGS" $USER
+# If there's no key on the region/account, push it so we can use it.
+echo $HASKEY | grep -qF "$SSHKEYID" || supernova $ACCOUNT $BYPASS keypair-add --pub-key $SSHKEY "$SSHUSER" &> /dev/null
 
+UUID=$(supernova $ACCOUNT $BYPASS boot --image $IMAGE --flavor $FLAVOR --key-name "$SSHUSER" $NAME 2> /dev/null | grep id | head -n 1 | awk '{print $4}')
+#####
+
+#### Wait for IP
+while [ -z "$IP" ]; do
+        sleep 1
+        IP="`supernova $ACCOUNT $BYPASS show --minimal $UUID 2> /dev/null | grep accessIPv4 | head -n 1 | awk '{print $4}' | tr -d '|'`"
+done
+####
+
+#### Wait till it's booted.
+(while ! ssh $SSHARGS "$USER@$IP" true; do
+        sleep 1
+        continue
+done) &> /dev/null
+####
+
+#### Script it or SSH to it?
 if [ -n "$SCRIPT" ]; then
 	export first second
-	for include in $SCRIPT; do # Cannot have spaces in filenames.
+	for include in $SCRIPT; do # Cannot have spaces, tabs, or newlines in filenames.
 		if [ -z "$first" ]; then
 			scp $SSHARGS "$include" "$USER@$IP":/root/.baker-kick &> /dev/null
 			first=1
@@ -54,5 +74,5 @@ else
 fi
 
 # Nuke unless ~/.baker_preserve exists.
-# 's so that ~ is not turned to local $HOME.
-ssh $SSHARGS "$USER@$IP" stat '~/.baker_preserve' &> /dev/null || $BAKERDIR/deleteng.sh $ACCOUNT $UUID "$BYPASS"
+# The single quotes are so that ~ is not turned to local $HOME.
+ssh $SSHARGS "$USER@$IP" stat '~/.baker_preserve' &> /dev/null || supernova $ACCOUNT $BYPASS delete $UUID &> /dev/null
