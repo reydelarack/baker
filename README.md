@@ -24,6 +24,18 @@ Nifty features
 baker.sh will log you directly into the server if you don't give it a script
 argument.
 
+Examples
+========
+
+baker.sh account # Boots FreeBSD performance1-1 server, works for Rackspace.
+baker.sh account imageuuid flavor
+
+Example recipies
+================
+
+https://github.com/teran-mckinney/bitnoder
+https://github.com/teran-mckinney/freebsd-flash-plugin
+
 Installation
 ============
 
