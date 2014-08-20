@@ -3,10 +3,21 @@ baker.sh
 
 Bash scripts for scripted server deployments on Openstack.
 
+Usage: baker.sh <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]
+
 Dependencies
 ============
 
-supernova. pip install it. Also install rackspace-novaclient (metapackage), or python-novaclient if not on Rackspace.
+pip for Python 2.X:
+
+ * [rackspace-novaclient](https://github.com/rackerlabs/rackspace-novaclient/), if on Rackspace's Openstack deployment (Cloud Servers)
+ * [python-novaclient](https://github.com/openstack/python-novaclient/), if not on Rackspace
+ * [supernova](https://github.com/major/supernova/), either way.
+
+Also:
+
+ * Bash
+ * OpenSSH
 
 Setting up Supernova for Rackspace
 ==================================
@@ -27,7 +38,7 @@ OS_AUTH_SYSTEM=rackspace
 
 You can make multiple of those entries per datacenter if you like. Use lon.identity for NOVA_URL on UK accounts.
 
-Protip: Make a [default] account/region. Some recipies use this as a feature.
+Protip: Make a [default] account/region. Some recipies use this as a feature. Checkout the [supernova documentation](http://supernova.readthedocs.org/) for more information on this.
 
 Gotchas
 =======

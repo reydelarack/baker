@@ -5,7 +5,7 @@
 # in list will be ran after all others have been uploaded. They will be uploaded
 # to /root/.baker/.
 
-[[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> <ImageID> <FlavorID> <Script> <Bypass>" && exit 1
+[[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]" && exit 1
 
 # -l $USER doesn't work with scp, so not using that here.
 SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
