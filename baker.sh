@@ -57,17 +57,17 @@ if [ -n "$SCRIPT" ]; then
 	export first second
 	for include in $SCRIPT; do # Cannot have spaces, tabs, or newlines in filenames.
 		if [ -z "$first" ]; then
-			scp $SSHARGS "$include" "$USER@$IP":/root/.baker-kick &> /dev/null
+			scp $SSHARGS "$include" "$USER@$IP":~/.baker-kick &> /dev/null
 			first=1
 		else
 			if [ -z "$second" ]; then
-				ssh $SSHARGS "$USER@$IP" 'mkdir /root/.baker/'
+				ssh $SSHARGS "$USER@$IP" 'mkdir ~/.baker/'
 				second=1
 			fi
-			scp $SSHARGS "$include" "$USER@$IP":/root/.baker/ &> /dev/null
+			scp $SSHARGS "$include" "$USER@$IP":~/.baker/ &> /dev/null
 		fi
 	done
-	ssh $SSHARGS "$USER@$IP" 'chmod 755 /root/.baker-kick; /root/.baker-kick'
+	ssh $SSHARGS "$USER@$IP" 'chmod 755 ~/.baker-kick; ~/.baker-kick'
 	unset first second
 else
 	ssh $SSHARGS "$USER@$IP"
