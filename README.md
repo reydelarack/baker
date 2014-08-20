@@ -27,6 +27,8 @@ OS_AUTH_SYSTEM=rackspace
 
 You can make multiple of those entries per datacenter if you like. Use lon.identity for NOVA_URL on UK accounts.
 
+Protip: Make a [default] account/region. Some recipies use this as a feature.
+
 Gotchas
 =======
 
