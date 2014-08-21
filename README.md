@@ -3,7 +3,9 @@ baker.sh
 
 Bash scripts for scripted server deployments on Openstack.
 
+```
 Usage: baker.sh <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]
+```
 
 Dependencies
 ============
