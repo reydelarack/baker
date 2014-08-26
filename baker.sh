@@ -16,10 +16,14 @@ FLAVOR=${3:-performance1-1}
 SCRIPT=$4
 BYPASS=$5
 NAME=${6:-"baker-`date +%s`"}
+EXTRACT='cd /; tar xf - --no-same-owner'
 
 USER=root
 OTHERUSER=`supernova $ACCOUNT $BYPASS image-show $IMAGE | grep com.rackspace__1__ssh_user | awk '{print $5}'`
-[ -n "$OTHERUSER" ] && USER=$OTHERUSER
+if [ -n "$OTHERUSER" ]; then
+	USER=$OTHERUSER
+	EXTRACT='sudo sh -c "cd /; tar xf - --no-same-owner"'
+fi
 
 SSHKEY=~/.ssh/id_rsa.pub
 
@@ -52,7 +56,7 @@ done
 done) &> /dev/null
 ####
 
-#### Script it or SSH to it?
+#### If no script argument, just SSH into it.
 if [ -n "$SCRIPT" ]; then
 	export first second
 	for include in $SCRIPT; do # Cannot have spaces, tabs, or newlines in filenames.
@@ -60,11 +64,17 @@ if [ -n "$SCRIPT" ]; then
 			scp $SSHARGS "$include" "$USER@$IP":~/.baker-kick &> /dev/null
 			first=1
 		else
-			if [ -z "$second" ]; then
-				ssh $SSHARGS "$USER@$IP" 'mkdir ~/.baker/'
-				second=1
+			if [ -d "$include" ]; then
+				cd $include
+				tar cf - . | ssh $SSHARGS "$USER@$IP" "$EXTRACT" &> /dev/null
+				cd $OLDPWD
+			else
+				if [ -z "$second" ]; then
+					ssh $SSHARGS "$USER@$IP" 'mkdir ~/.baker/'
+					second=1
+				fi
+				scp $SSHARGS "$include" "$USER@$IP":~/.baker/ &> /dev/null
 			fi
-			scp $SSHARGS "$include" "$USER@$IP":~/.baker/ &> /dev/null
 		fi
 	done
 	ssh $SSHARGS "$USER@$IP" 'chmod 755 ~/.baker-kick; ~/.baker-kick'
