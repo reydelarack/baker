@@ -8,7 +8,7 @@
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]" && exit 1
 
 # -l $USER doesn't work with scp, so not using that here.
-SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
+SSHARGS="-q -oConnectTimeout=10 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
 IMAGE=${2:-f0b8595d-128e-4514-a5cc-847429dcfa6b}
@@ -34,7 +34,7 @@ SSHKEYID="`ssh-keygen -lf $SSHKEY | awk '{print $2}'`"
 SSHUSER="`echo $SSHKEYID | tr -d ':'`"
 
 HASKEY="`supernova $ACCOUNT $BYPASS keypair-list 2> /dev/null | grep -F $SSHKEYID`"
-[ -n "$HASKEY" ] && SSHUSER="`echo $HASKEY | awk '{print $2}'`"
+[ -n "$HASKEY" ] && SSHUSER="`echo $HASKEY | awk '{print $2}'`" # Use existing SSH key if it has it.
 
 # If there's no key on the region/account, push it so we can use it.
 echo $HASKEY | grep -qF "$SSHKEYID" || supernova $ACCOUNT $BYPASS keypair-add --pub-key $SSHKEY "$SSHUSER" &> /dev/null
@@ -52,7 +52,6 @@ done
 #### Wait till it's booted.
 (while ! ssh $SSHARGS "$USER@$IP" true; do
         sleep 1
-        continue
 done) &> /dev/null
 ####
 
