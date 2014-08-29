@@ -8,7 +8,7 @@
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]" && exit 1
 
 # -l $USER doesn't work with scp, so not using that here.
-SSHARGS="-q -oConnectTimeout=10 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
+SSHARGS="-q -oConnectTimeout=20 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
 IMAGE=${2:-f0b8595d-128e-4514-a5cc-847429dcfa6b}
