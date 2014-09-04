@@ -27,6 +27,11 @@ fi
 
 SSHKEY=~/.ssh/id_rsa.pub
 
+function fail() {
+	echo "ERROR: $*"
+	exit 1
+}
+
 ##### Boot the server
 [ -f "$SSHKEY" ] || fail "$SSHKEY does not exist."
 # keypair-add is picky:
