@@ -8,7 +8,7 @@
 [[ $# -lt 1 ]] && echo "Usage: $(basename $0) <AccountID> [ImageID] [FlavorID] [Script] [Bypass] [Name]" && exit 1
 
 # -l $USER doesn't work with scp, so not using that here.
-SSHARGS="-q -oConnectTimeout=20 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
+SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
 IMAGE=${2:-f0b8595d-128e-4514-a5cc-847429dcfa6b}
@@ -19,7 +19,7 @@ NAME=${6:-"baker-`date +%s`"}
 EXTRACT='cd /; tar xf - --no-same-owner'
 
 USER=root
-OTHERUSER=`supernova $ACCOUNT $BYPASS image-show $IMAGE | grep com.rackspace__1__ssh_user | awk '{print $5}'`
+OTHERUSER=`supernova $ACCOUNT $BYPASS image-show $IMAGE 2> /dev/null | grep com.rackspace__1__ssh_user | awk '{print $5}'`
 if [ -n "$OTHERUSER" ]; then
 	USER=$OTHERUSER
 	EXTRACT='sudo sh -c "cd /; tar xf - --no-same-owner"'
