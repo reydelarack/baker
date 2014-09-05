@@ -62,27 +62,23 @@ done) &> /dev/null
 
 #### If no script argument, just SSH into it.
 if [ -n "$SCRIPT" ]; then
-	export first second
+	export first
 	for include in $SCRIPT; do # Cannot have spaces, tabs, or newlines in filenames.
-		if [ -z "$first" ]; then
-			scp $SSHARGS "$include" "$USER@$IP":~/.baker-kick &> /dev/null
-			first=1
+		if [ -d "$include" ]; then
+			cd $include
+			tar cf - . | ssh $SSHARGS "$USER@$IP" "$EXTRACT" &> /dev/null
+			cd $OLDPWD
 		else
-			if [ -d "$include" ]; then
-				cd $include
-				tar cf - . | ssh $SSHARGS "$USER@$IP" "$EXTRACT" &> /dev/null
-				cd $OLDPWD
+			if [ -z "$first" ]; then
+				cat "$include" | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker-kick; mkdir ~/.baker" &> /dev/null
+				first=1
 			else
-				if [ -z "$second" ]; then
-					ssh $SSHARGS "$USER@$IP" 'mkdir ~/.baker/'
-					second=1
-				fi
-				scp $SSHARGS "$include" "$USER@$IP":~/.baker/ &> /dev/null
+				cat "$include" | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker/`basename $include`" &> /dev/null
 			fi
 		fi
 	done
 	ssh $SSHARGS "$USER@$IP" 'chmod 755 ~/.baker-kick; ~/.baker-kick'
-	unset first second
+	unset first
 else
 	ssh $SSHARGS "$USER@$IP"
 fi
