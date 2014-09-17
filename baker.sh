@@ -73,7 +73,8 @@ if [ -n "$SCRIPT" ]; then
 				cat "$include" | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker-kick; mkdir ~/.baker" &> /dev/null
 				first=1
 			else
-				cat "$include" | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker/`basename $include`" &> /dev/null
+				FILE=`basename $include`
+				cat $include | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker/$FILE" &> /dev/null
 			fi
 		fi
 	done
