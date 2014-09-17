@@ -74,7 +74,7 @@ if [ -n "$SCRIPT" ]; then
 				first=1
 			else
 				FILE=`basename $include`
-				cat $include | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker/$FILE" &> /dev/null
+				cat `eval echo $include` | ssh $SSHARGS "$USER@$IP" "cat > ~/.baker/$FILE" &> /dev/null
 			fi
 		fi
 	done
