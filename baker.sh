@@ -11,7 +11,7 @@
 SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
-IMAGE=${2:-f0b8595d-128e-4514-a5cc-847429dcfa6b}
+IMAGE=${2:-fd3b2ce4-b2a5-4b4b-81f3-cd4dfc2e0555} # FreeBSD 10.0
 FLAVOR=${3:-performance1-1}
 SCRIPT=$4
 BYPASS=$5
