@@ -11,8 +11,8 @@
 SSHARGS="-q -oConnectTimeout=30 -oCheckHostIP=no -oStrictHostKeyChecking=no -oIdentitiesOnly=yes -oUserKnownHostsFile=/dev/null -oBatchMode=yes -oVerifyHostKeyDNS=no"
 
 ACCOUNT=${1:-default}
-IMAGE=${2:-b49f8b6d-7b31-47e3-8cc4-a2c0a9292e97} # FreeBSD 10.0
-FLAVOR=${3:-performance1-1}
+IMAGE=${2:-7a1cf8de-7721-4d56-900b-1e65def2ada5} # FreeBSD 10.1
+FLAVOR=${3:-general1-1}
 SCRIPT=$4
 BYPASS=$5
 NAME=${6:-"baker-`date +%s`"}
@@ -45,6 +45,8 @@ HASKEY="`supernova $ACCOUNT $BYPASS keypair-list 2> /dev/null | grep -F $SSHKEYI
 echo $HASKEY | grep -qF "$SSHKEYID" || supernova $ACCOUNT $BYPASS keypair-add --pub-key $SSHKEY "$SSHUSER" &> /dev/null
 
 UUID=$(supernova $ACCOUNT $BYPASS boot --image $IMAGE --flavor $FLAVOR --key-name "$SSHUSER" $NAME 2> /dev/null | grep -F '| id' | head -n 1 | awk '{print $4}')
+
+[ -z "$UUID" ] && fail 'Did not get UUID when booting server.' 
 #####
 
 #### Wait for IP
